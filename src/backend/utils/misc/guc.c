@@ -70,6 +70,7 @@
 #include "storage/proc.h"
 #include "storage/predicate.h"
 #include "tcop/tcopprot.h"
+#include "tcop/dejector.h"
 #include "tsearch/ts_cache.h"
 #include "utils/builtins.h"
 #include "utils/bytea.h"
@@ -1613,6 +1614,16 @@ static struct config_bool ConfigureNamesBool[] =
 		&data_checksums,
 		false,
 		NULL, NULL, NULL
+	},
+
+	{
+		{"dejector_enforcing", PGC_USERSET, CONN_AUTH_SETTINGS,
+		 gettext_noop("Reject queries that do not match the dejector filter"),
+		 NULL
+		},
+		&dejector_enforcing,
+		false,
+		check_dejector_enforcing, NULL, NULL
 	},
 
 	/* End-of-list marker */
@@ -3391,6 +3402,20 @@ static struct config_string ConfigureNamesString[] =
 		&cluster_name,
 		"",
 		check_cluster_name, NULL, NULL
+	},
+
+	{
+		/*
+		 * It might be nice to have this as a PGC_BACKEND variable, to only be
+		 * settable at connection startup
+		 */
+		{"dejector_mask", PGC_USERSET, CONN_AUTH_SECURITY,
+		 gettext_noop("Dejector mask"),
+		 gettext_noop("Controls the set of statement shapes that will be allowed.")
+		},
+		&dejector_mask,
+		"",
+		check_dejector_mask, NULL, show_dejector_mask
 	},
 
 	/* End-of-list marker */
