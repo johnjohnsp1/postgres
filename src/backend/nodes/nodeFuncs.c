@@ -3002,6 +3002,21 @@ raw_expression_tree_walker(Node *node,
 		case T_ParamRef:
 		case T_A_Const:
 		case T_A_Star:
+		case T_ClosePortalStmt:
+		case T_FetchStmt:
+		case T_NotifyStmt:
+		case T_ListenStmt:
+		case T_UnlistenStmt:
+		case T_LoadStmt:
+		case T_DropdbStmt:
+		case T_VariableShowStmt:
+		case T_DiscardStmt:
+		case T_CheckPointStmt:
+		case T_DeallocateStmt:
+		case T_DropTableSpaceStmt:
+		case T_AlterEventTrigStmt:
+		case T_ReplicaIdentityStmt:
+	    case T_RoleSpec:
 			/* primitive node types with no subnodes */
 			break;
 		case T_Alias:
@@ -3385,6 +3400,903 @@ raw_expression_tree_walker(Node *node,
 				if (walker(rts->repeatable, context))
 					return true;
 				if (walker(rts->args, context))
+					return true;
+			}
+			break;
+		case T_AlterTableStmt:
+			{
+				AlterTableStmt *ats = (AlterTableStmt *) node;
+
+				if (walker(ats->relation, context))
+					return true;
+				if (walker(ats->cmds, context))
+					return true;
+			}
+			break;
+		case T_AlterTableCmd:
+			{
+				AlterTableCmd *atc = (AlterTableCmd *) node;
+
+				if (walker(atc->newowner, context))
+					return true;
+				if (walker(atc->def, context))
+					return true;
+			}
+			break;
+		case T_AlterDomainStmt:
+			{
+				AlterDomainStmt *ads = (AlterDomainStmt *) node;
+
+				if (walker(ads->typeName, context))
+					return true;
+				if (walker(ads->def, context))
+					return true;
+			}
+			break;
+		case T_SetOperationStmt:
+			{
+				SetOperationStmt *sos = (SetOperationStmt *) node;
+
+				if (walker(sos->larg, context))
+					return true;
+				if (walker(sos->rarg, context))
+					return true;
+				if (walker(sos->colTypes, context))
+					return true;
+				if (walker(sos->colTypmods, context))
+					return true;
+				if (walker(sos->colCollations, context))
+					return true;
+				if (walker(sos->groupClauses, context))
+					return true;
+			}
+			break;
+		case T_GrantStmt:
+			{
+				GrantStmt *gs = (GrantStmt *) node;
+
+				if (walker(gs->objects, context))
+					return true;
+				if (walker(gs->privileges, context))
+					return true;
+				if (walker(gs->grantees, context))
+					return true;
+			}
+			break;
+		case T_GrantRoleStmt:
+			{
+				GrantRoleStmt *grs = (GrantRoleStmt *) node;
+
+				if (walker(grs->granted_roles, context))
+					return true;
+				if (walker(grs->grantee_roles, context))
+					return true;
+				if (walker(grs->grantor, context))
+					return true;
+			}
+			break;
+		case T_AlterDefaultPrivilegesStmt:
+			{
+				AlterDefaultPrivilegesStmt *adps = (AlterDefaultPrivilegesStmt *) node;
+
+				if (walker(adps->options, context))
+					return true;
+				if (walker(adps->action, context))
+					return true;
+			}
+			break;
+		case T_ClusterStmt:
+			{
+				ClusterStmt *cs = (ClusterStmt *) node;
+
+				if (walker(cs->relation, context))
+					return true;
+			}
+			break;
+		case T_CopyStmt:
+			{
+				CopyStmt *cs = (CopyStmt *) node;
+
+				if (walker(cs->relation, context))
+					return true;
+				if (walker(cs->query, context))
+					return true;
+				if (walker(cs->attlist, context))
+					return true;
+				if (walker(cs->options, context))
+					return true;
+			}
+			break;
+		case T_CreateStmt:
+			{
+				CreateStmt *cs = (CreateStmt *) node;
+
+				if (walker(cs->relation, context))
+					return true;
+				if (walker(cs->tableElts, context))
+					return true;
+				if (walker(cs->inhRelations, context))
+					return true;
+				if (walker(cs->ofTypename, context))
+					return true;
+				if (walker(cs->constraints, context))
+					return true;
+				if (walker(cs->options, context))
+					return true;
+			}
+			break;
+		case T_DefineStmt:
+			{
+				DefineStmt *ds = (DefineStmt *) node;
+
+				if (walker(ds->defnames, context))
+					return true;
+				if (walker(ds->args, context))
+					return true;
+				if (walker(ds->definition, context))
+					return true;
+			}
+			break;
+		case T_DropStmt:
+			{
+				DropStmt *ds = (DropStmt *) node;
+
+				if (walker(ds->objects, context))
+					return true;
+				if (walker(ds->arguments, context))
+					return true;
+			}
+			break;
+		case T_TruncateStmt:
+			{
+				TruncateStmt *ts = (TruncateStmt *) node;
+
+				if (walker(ts->relations, context))
+					return true;
+			}
+			break;
+		case T_CommentStmt:
+			{
+				CommentStmt *cs = (CommentStmt *) node;
+
+				if (walker(cs->objname, context))
+					return true;
+				if (walker(cs->objargs, context))
+					return true;
+			}
+			break;
+		case T_IndexStmt:
+			{
+				IndexStmt *is = (IndexStmt *) node;
+
+				if (walker(is->relation, context))
+					return true;
+				if (walker(is->indexParams, context))
+					return true;
+				if (walker(is->options, context))
+					return true;
+				if (walker(is->whereClause, context))
+					return true;
+				if (walker(is->excludeOpNames, context))
+					return true;
+			}
+			break;
+		case T_CreateFunctionStmt:
+			{
+				CreateFunctionStmt *cfs = (CreateFunctionStmt *) node;
+
+				if (walker(cfs->funcname, context))
+					return true;
+				if (walker(cfs->parameters, context))
+					return true;
+				if (walker(cfs->returnType, context))
+					return true;
+				if (walker(cfs->options, context))
+					return true;
+				if (walker(cfs->withClause, context))
+					return true;
+			}
+			break;
+		case T_AlterFunctionStmt:
+			{
+				AlterFunctionStmt *afs = (AlterFunctionStmt *) node;
+
+				if (walker(afs->func, context))
+					return true;
+				if (walker(afs->actions, context))
+					return true;
+			}
+			break;
+		case T_DoStmt:
+			{
+				DoStmt *ds = (DoStmt *) node;
+
+				if (walker(ds->args, context))
+					return true;
+			}
+			break;
+		case T_RenameStmt:
+			{
+				RenameStmt *rs = (RenameStmt *) node;
+
+				if (walker(rs->relation, context))
+					return true;
+				if (walker(rs->object, context))
+					return true;
+				if (walker(rs->objarg, context))
+					return true;
+			}
+			break;
+		case T_RuleStmt:
+			{
+				RuleStmt *rs = (RuleStmt *) node;
+
+				if (walker(rs->relation, context))
+					return true;
+				if (walker(rs->whereClause, context))
+					return true;
+				if (walker(rs->actions, context))
+					return true;
+			}
+			break;
+		case T_TransactionStmt:
+			{
+				TransactionStmt *ts = (TransactionStmt *) node;
+
+				if (walker(ts->options, context))
+					return true;
+			}
+			break;
+		case T_ViewStmt:
+			{
+				ViewStmt *vs = (ViewStmt *) node;
+
+				if (walker(vs->view, context))
+					return true;
+				if (walker(vs->aliases, context))
+					return true;
+				if (walker(vs->query, context))
+					return true;
+				if (walker(vs->options, context))
+					return true;
+			}
+			break;
+		case T_CreateDomainStmt:
+			{
+				CreateDomainStmt *cds = (CreateDomainStmt *) node;
+
+				if (walker(cds->domainname, context))
+					return true;
+				if (walker(cds->typeName, context))
+					return true;
+				if (walker(cds->constraints, context))
+					return true;
+			}
+			break;
+		case T_CreatedbStmt:
+			{
+				CreatedbStmt *cd = (CreatedbStmt *) node;
+
+				if (walker(cd->options, context))
+					return true;
+			}
+			break;
+		case T_VacuumStmt:
+			{
+				VacuumStmt *vs = (VacuumStmt *) node;
+
+				if (walker(vs->relation, context))
+					return true;
+				if (walker(vs->va_cols, context))
+					return true;
+			}
+			break;
+		case T_ExplainStmt:
+			{
+				ExplainStmt *es = (ExplainStmt *) node;
+
+				if (walker(es->query, context))
+					return true;
+				if (walker(es->options, context))
+					return true;
+			}
+			break;
+		case T_CreateTableAsStmt:
+			{
+				CreateTableAsStmt *ctas = (CreateTableAsStmt *) node;
+
+				if (walker(ctas->query, context))
+					return true;
+				if (walker(ctas->into, context))
+					return true;
+			}
+			break;
+		case T_CreateSeqStmt:
+			{
+				CreateSeqStmt *css = (CreateSeqStmt *) node;
+
+				if (walker(css->sequence, context))
+					return true;
+				if (walker(css->options, context))
+					return true;
+			}
+			break;
+		case T_AlterSeqStmt:
+			{
+				AlterSeqStmt *ass = (AlterSeqStmt *) node;
+
+				if (walker(ass->sequence, context))
+					return true;
+				if (walker(ass->options, context))
+					return true;
+			}
+			break;
+		case T_VariableSetStmt:
+			{
+				VariableSetStmt *vss = (VariableSetStmt *) node;
+
+				if (walker(vss->args, context))
+					return true;
+			}
+			break;
+		case T_CreateTrigStmt:
+			{
+				CreateTrigStmt *cts = (CreateTrigStmt *) node;
+
+				if (walker(cts->relation, context))
+					return true;
+				if (walker(cts->funcname, context))
+					return true;
+				if (walker(cts->args, context))
+					return true;
+				if (walker(cts->columns, context))
+					return true;
+				if (walker(cts->whenClause, context))
+					return true;
+				if (walker(cts->constrrel, context))
+					return true;
+			}
+			break;
+		case T_CreatePLangStmt:
+			{
+				CreatePLangStmt *cpls = (CreatePLangStmt *) node;
+
+				if (walker(cpls->plhandler, context))
+					return true;
+				if (walker(cpls->plinline, context))
+					return true;
+				if (walker(cpls->plvalidator, context))
+					return true;
+			}
+			break;
+		case T_CreateRoleStmt:
+			{
+				CreateRoleStmt *crs = (CreateRoleStmt *) node;
+
+				if (walker(crs->options, context))
+					return true;
+			}
+			break;
+		case T_AlterRoleStmt:
+			{
+				AlterRoleStmt *ars = (AlterRoleStmt *)node;
+
+				if (walker(ars->role, context))
+					return true;
+				if (walker(ars->options, context))
+					return true;
+			}
+			break;
+		case T_DropRoleStmt:
+			{
+				DropRoleStmt *drs = (DropRoleStmt *) node;
+
+				if (walker(drs->roles, context))
+					return true;
+			}
+			break;
+		case T_LockStmt:
+			{
+				LockStmt *ls = (LockStmt *) node;
+
+				if (walker(ls->relations, context))
+					return true;
+			}
+			break;
+		case T_ConstraintsSetStmt:
+			{
+				ConstraintsSetStmt *css = (ConstraintsSetStmt *) node;
+				if (walker(css->constraints, context))
+					return true;
+			}
+			break;
+		case T_ReindexStmt:
+			{
+				ReindexStmt *rs = (ReindexStmt *) node;
+
+				if (walker(rs->relation, context))
+					return true;
+			}
+			break;
+		case T_CreateSchemaStmt:
+			{
+				CreateSchemaStmt *css = (CreateSchemaStmt *) node;
+
+				if (walker(css->authrole, context))
+					return true;
+				if (walker(css->schemaElts, context))
+					return true;
+			}
+			break;
+		case T_AlterDatabaseStmt:
+			{
+				AlterDatabaseStmt *ads = (AlterDatabaseStmt *) node;
+
+				if (walker(ads->options, context))
+					return true;
+			}
+			break;
+		case T_AlterDatabaseSetStmt:
+			{
+				AlterDatabaseSetStmt *adss = (AlterDatabaseSetStmt *) node;
+
+				if (walker(adss->setstmt, context))
+					return true;
+			}
+			break;
+		case T_AlterRoleSetStmt:
+			{
+				AlterRoleSetStmt *arss = (AlterRoleSetStmt *) node;
+
+				if (walker(arss->role, context))
+					return true;
+				if (walker(arss->setstmt, context))
+					return true;
+			}
+			break;
+		case T_CreateConversionStmt:
+			{
+				CreateConversionStmt *ccs = (CreateConversionStmt *) node;
+
+				if (walker(ccs->conversion_name, context))
+					return true;
+				if (walker(ccs->func_name, context))
+					return true;
+			}
+			break;
+		case T_CreateCastStmt:
+			{
+				CreateCastStmt *ccs = (CreateCastStmt *) node;
+
+				if (walker(ccs->sourcetype, context))
+					return true;
+				if (walker(ccs->targettype, context))
+					return true;
+				if (walker(ccs->func, context))
+					return true;
+			}
+			break;
+		case T_CreateOpClassStmt:
+			{
+				CreateOpClassStmt *cocs = (CreateOpClassStmt *) node;
+
+				if (walker(cocs->opclassname, context))
+					return true;
+				if (walker(cocs->opfamilyname, context))
+					return true;
+				if (walker(cocs->datatype, context))
+					return true;
+				if (walker(cocs->items, context))
+					return true;
+			}
+			break;
+		case T_CreateOpFamilyStmt:
+			{
+				CreateOpFamilyStmt *cofs = (CreateOpFamilyStmt *) node;
+
+				if (walker(cofs->opfamilyname, context))
+					return true;
+			}
+			break;
+		case T_AlterOpFamilyStmt:
+			{
+				AlterOpFamilyStmt *aofs = (AlterOpFamilyStmt *) node;
+
+				if (walker(aofs->opfamilyname, context))
+					return true;
+				if (walker(aofs->items, context))
+					return true;
+			}
+			break;
+		case T_PrepareStmt:
+			{
+				PrepareStmt *ps = (PrepareStmt *) node;
+
+				if (walker(ps->argtypes, context))
+					return true;
+				if (walker(ps->query, context))
+					return true;
+			}
+			break;
+		case T_ExecuteStmt:
+			{
+				ExecuteStmt *es = (ExecuteStmt *) node;
+
+				if (walker(es->params, context))
+					return true;
+			}
+			break;
+		case T_DeclareCursorStmt:
+			{
+				DeclareCursorStmt *dcs = (DeclareCursorStmt *) node;
+
+				if (walker(dcs->query, context))
+					return true;
+			}
+			break;
+		case T_CreateTableSpaceStmt:
+			{
+				CreateTableSpaceStmt *ctss = (CreateTableSpaceStmt *) node;
+
+				if (walker(ctss->owner, context))
+					return true;
+				if (walker(ctss->options, context))
+					return true;
+			}
+			break;
+		case T_AlterObjectSchemaStmt:
+			{
+				AlterObjectSchemaStmt *aoss = (AlterObjectSchemaStmt *) node;
+
+				if (walker(aoss->relation, context))
+					return true;
+				if (walker(aoss->object, context))
+					return true;
+				if (walker(aoss->objarg, context))
+					return true;
+			}
+			break;
+		case T_AlterOwnerStmt:
+			{
+				AlterOwnerStmt *aos = (AlterOwnerStmt *) node;
+
+				if (walker(aos->relation, context))
+					return true;
+				if (walker(aos->object, context))
+					return true;
+				if (walker(aos->objarg, context))
+					return true;
+			}
+			break;
+		case T_DropOwnedStmt:
+			{
+				DropOwnedStmt *dos = (DropOwnedStmt *) node;
+
+				if (walker(dos->roles, context))
+					return true;
+			}
+			break;
+		case T_ReassignOwnedStmt:
+			{
+				ReassignOwnedStmt *ros = (ReassignOwnedStmt *) node;
+
+				if (walker(ros->roles, context))
+					return true;
+				if (walker(ros->newrole, context))
+					return true;
+			}
+			break;
+		case T_CompositeTypeStmt:
+			{
+				CompositeTypeStmt *cts = (CompositeTypeStmt *) node;
+
+				if (walker(cts->typevar, context))
+					return true;
+				if (walker(cts->coldeflist, context))
+					return true;
+			}
+			break;
+		case T_CreateEnumStmt:
+			{
+				CreateEnumStmt *ces = (CreateEnumStmt *) node;
+
+				if (walker(ces->typeName, context))
+					return true;
+				if (walker(ces->vals, context))
+					return true;
+			}
+			break;
+		case T_CreateRangeStmt:
+			{
+				CreateRangeStmt *crs = (CreateRangeStmt *) node;
+
+				if (walker(crs->typeName, context))
+					return true;
+				if (walker(crs->params, context))
+					return true;
+			}
+			break;
+		case T_AlterEnumStmt:
+			{
+				AlterEnumStmt *aes = (AlterEnumStmt *) node;
+
+				if (walker(aes->typeName, context))
+					return true;
+			}
+			break;
+		case T_AlterTSDictionaryStmt:
+			{
+				AlterTSDictionaryStmt *ats = (AlterTSDictionaryStmt *) node;
+
+				if (walker(ats->dictname, context))
+					return true;
+				if (walker(ats->options, context))
+					return true;
+			}
+			break;
+		case T_AlterTSConfigurationStmt:
+			{
+				AlterTSConfigurationStmt *ats = (AlterTSConfigurationStmt *) node;
+
+				if (walker(ats->cfgname, context))
+					return true;
+			}
+			break;
+		case T_CreateFdwStmt:
+			{
+				CreateFdwStmt *cfs = (CreateFdwStmt *) node;
+
+				if (walker(cfs->func_options, context))
+					return true;
+				if (walker(cfs->options, context))
+					return true;
+			}
+			break;
+		case T_AlterFdwStmt:
+			{
+				AlterFdwStmt *afs = (AlterFdwStmt *) node;
+
+				if (walker(afs->func_options, context))
+					return true;
+				if (walker(afs->options, context))
+					return true;
+			}
+			break;
+		case T_CreateForeignServerStmt:
+			{
+				CreateForeignServerStmt *cfss = (CreateForeignServerStmt *) node;
+
+				if (walker(cfss->options, context))
+					return true;
+			}
+			break;
+		case T_AlterForeignServerStmt:
+			{
+				AlterForeignServerStmt *afss = (AlterForeignServerStmt *) node;
+
+				if (walker(afss->options, context))
+					return true;
+			}
+			break;
+		case T_CreateUserMappingStmt:
+			{
+				CreateUserMappingStmt *cums = (CreateUserMappingStmt *) node;
+
+				if (walker(cums->user, context))
+					return true;
+				if (walker(cums->options, context))
+					return true;
+			}
+			break;
+		case T_AlterUserMappingStmt:
+			{
+				AlterUserMappingStmt *aums = (AlterUserMappingStmt *) node;
+
+				if (walker(aums->user, context))
+					return true;
+				if (walker(aums->options, context))
+					return true;
+			}
+			break;
+		case T_DropUserMappingStmt:
+			{
+				DropUserMappingStmt *dums = (DropUserMappingStmt *) node;
+
+				if (walker(dums->user, context))
+					return true;
+			}
+			break;
+		case T_AlterTableSpaceOptionsStmt:
+			{
+				AlterTableSpaceOptionsStmt *atsos = (AlterTableSpaceOptionsStmt *) node;
+
+				if (walker(atsos->options, context))
+					return true;
+			}
+			break;
+		case T_AlterTableMoveAllStmt:
+			{
+				AlterTableMoveAllStmt *atmas = (AlterTableMoveAllStmt *) node;
+
+				if (walker(atmas->roles, context))
+					return true;
+			}
+			break;
+		case T_SecLabelStmt:
+			{
+				SecLabelStmt *sls = (SecLabelStmt *) node;
+
+				if (walker(sls->objname, context))
+					return true;
+				if (walker(sls->objargs, context))
+					return true;
+			}
+			break;
+		case T_CreateForeignTableStmt:
+			{
+				CreateForeignTableStmt *cfts = (CreateForeignTableStmt *) node;
+
+				if (walker(cfts->options, context))
+					return true;
+			}
+			break;
+		case T_ImportForeignSchemaStmt:
+			{
+				ImportForeignSchemaStmt *ifss = (ImportForeignSchemaStmt *) node;
+
+				if (walker(ifss->table_list, context))
+					return true;
+				if (walker(ifss->options, context))
+					return true;
+			}
+			break;
+		case T_CreateExtensionStmt:
+			{
+				CreateExtensionStmt *ces = (CreateExtensionStmt *) node;
+
+				if (walker(ces->options, context))
+					return true;
+			}
+			break;
+		case T_AlterExtensionStmt:
+			{
+				AlterExtensionStmt *aes = (AlterExtensionStmt *) node;
+
+				if (walker(aes->options, context))
+					return true;
+			}
+			break;
+		case T_AlterExtensionContentsStmt:
+			{
+				AlterExtensionContentsStmt *aecs = (AlterExtensionContentsStmt *) node;
+
+				if (walker(aecs->objname, context))
+					return true;
+				if (walker(aecs->objargs, context))					return true;
+			}
+			break;
+		case T_CreateEventTrigStmt:
+			{
+				CreateEventTrigStmt *cets = (CreateEventTrigStmt *) node;
+
+				if (walker(cets->whenclause, context))
+					return true;
+				if (walker(cets->funcname, context))
+					return true;
+			}
+			break;
+		case T_RefreshMatViewStmt:
+			{
+				RefreshMatViewStmt *rmvs = (RefreshMatViewStmt *) node;
+
+				if (walker(rmvs->relation, context))
+					return true;
+			}
+			break;
+		case T_AlterSystemStmt:
+			{
+				AlterSystemStmt *ass = (AlterSystemStmt *) node;
+
+				if (walker(ass->setstmt, context))
+					return true;
+			}
+			break;
+		case T_CreatePolicyStmt:
+			{
+				CreatePolicyStmt *cps = (CreatePolicyStmt *) node;
+
+				if (walker(cps->table, context))
+					return true;
+				if (walker(cps->roles, context))
+					return true;
+				if (walker(cps->qual, context))
+					return true;
+				if (walker(cps->with_check, context))
+					return true;
+			}
+			break;
+		case T_AlterPolicyStmt:
+			{
+				AlterPolicyStmt *aps = (AlterPolicyStmt *) node;
+
+				if (walker(aps->table, context))
+					return true;
+				if (walker(aps->roles, context))
+					return true;
+				if (walker(aps->qual, context))
+					return true;
+				if (walker(aps->with_check, context))
+					return true;
+			}
+			break;
+		case T_CreateTransformStmt:
+			{
+				CreateTransformStmt *cts = (CreateTransformStmt *) node;
+
+				if (walker(cts->type_name, context))
+					return true;
+				if (walker(cts->fromsql, context))
+					return true;
+				if (walker(cts->tosql, context))
+					return true;
+			}
+			break;
+	    case T_Constraint:
+		    {
+				Constraint *c = (Constraint *) node;
+
+				if (walker(c->raw_expr, context))
+					return true;
+				if (walker(c->keys, context))
+					return true;
+				if (walker(c->exclusions, context))
+					return true;
+				if (walker(c->options, context))
+					return true;
+				if (walker(c->where_clause, context))
+					return true;
+				if (walker(c->pktable, context))
+					return true;
+				if (walker(c->fk_attrs, context))
+					return true;
+				if (walker(c->pk_attrs, context))
+					return true;
+				if (walker(c->old_conpfeqop, context))
+					return true;
+			}
+			break;
+	    case T_DefElem:
+		    {
+				DefElem *de = (DefElem *) node;
+
+				if (walker(de->arg, context))
+					return true;
+			}
+			break;
+    	case T_FuncWithArgs:
+		    {
+				FuncWithArgs *fwa = (FuncWithArgs *) node;
+
+				if (walker(fwa->funcname, context))
+					return true;
+				if (walker(fwa->funcargs, context))
+					return true;
+			}
+	    case T_AccessPriv:
+		    {
+				AccessPriv *ap = (AccessPriv *) node;
+
+				if (walker(ap->cols, context))
+					return true;
+		    }
+			break;
+	    case T_FunctionParameter:
+		    {
+				FunctionParameter *fp = (FunctionParameter *) node;
+
+				if (walker(fp->argType, context))
+					return true;
+				if (walker(fp->defexpr, context))
 					return true;
 			}
 			break;
