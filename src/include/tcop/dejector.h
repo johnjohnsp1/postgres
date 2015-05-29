@@ -1,6 +1,6 @@
 #ifndef DEJECTOR_H
 #define DEJECTOR_H
-
+#include "nodes/nodes.h"
 /**
  * This function either adds the current statement into the current dejection
  * mask or determines if the statement is allowed by the current dejection

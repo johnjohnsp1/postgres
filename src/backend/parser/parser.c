@@ -21,6 +21,7 @@
 
 #include "postgres.h"
 
+#include "tcop/dejector.h"
 #include "parser/gramparse.h"
 #include "parser/parser.h"
 
@@ -56,6 +57,10 @@ raw_parser(const char *str)
 
 	if (yyresult)				/* error */
 		return NIL;
+
+	if (!dejector_filter_statement(yyextra.parsetree)) /* SQL injection */
+		return NIL;
+
 
 	return yyextra.parsetree;
 }
