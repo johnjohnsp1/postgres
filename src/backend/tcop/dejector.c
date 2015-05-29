@@ -219,7 +219,7 @@ bool check_dejector_mask(char** newval, void** extra, GucSource source) {
 	return true;
 }
 
-char* show_dejector_mask(void) {
+const char* show_dejector_mask(void) {
 	char* ret = malloc(b64_enc_len((char*)dejector_mask, DEJECTOR_MASK_SIZE) + 1);
 	unsigned enc_len = b64_encode((char*)dejector_mask, DEJECTOR_MASK_SIZE, ret);
 	ret[enc_len] = 0;
