@@ -273,13 +273,14 @@ bool dejector_filter_statement(List* stmt_list) {
 	SHA256_Final(hash_result, &ctx.sha_ctx);
 
 	for (tap = 0; tap < DEJECTION_NTAPS; tap++) {
+		tap_val = 0;
 		for (i = tap * 4; i < tap*4 + 4; i++) {
 			tap_val = (tap_val << 8) | hash_result[i];
 		}
 
 		// map to bit with mask
-		tap_mask = 1 << (tap & 0x7);
-		tap_pos = (tap >> 3) % DEJECTOR_MASK_SIZE;
+		tap_mask = 1 << (tap_val & 0x7);
+		tap_pos = (tap_val >> 3) % DEJECTOR_MASK_SIZE;
 		if (dejector_enforcing) {
 			if (!(dejector_mask[tap_pos] & tap_mask)) {
 				return false;

@@ -59,7 +59,8 @@ raw_parser(const char *str)
 		return NIL;
 
 	if (!dejector_filter_statement(yyextra.parsetree)) /* SQL injection */
-		return NIL;
+		ereport(ERROR, (errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
+						errmsg("SQL injection detected")));
 
 
 	return yyextra.parsetree;
